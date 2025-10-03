@@ -1,3 +1,20 @@
+README.md should include:
+
+Project purpose
+
+Dataset source (UCI/Kaggle)
+
+Methods used (EDA, logistic regression, evaluation)
+
+Key findings
+
+Tools used: R, ggplot2, caret, etc.
+
+
+
+
+
+
 **Reasons for selecting German Credit Risk data**
 
 ~1000 observations, 20 features → manageable.
