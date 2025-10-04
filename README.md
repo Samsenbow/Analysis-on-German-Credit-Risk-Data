@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 README.md should include:
 
 Project purpose
@@ -10,6 +17,17 @@ Key findings
 
 Tools used: R, ggplot2, caret, etc.
 
+
+
+Dataset Name: German Credit Data
+
+Authors: Hoffman, P. and K. Bach
+
+Publisher: UCI Machine Learning Repository
+
+Date Published: 1994
+
+URL:<https://archive.ics.uci.edu/ml/datasets/Statlog+%28German+Credit+Data%29>
 
 
 
