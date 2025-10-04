@@ -25,8 +25,6 @@ Authors: Hoffman, P. and K. Bach
 
 Publisher: UCI Machine Learning Repository
 
-Date Published: 1994
-
 URL:<https://archive.ics.uci.edu/ml/datasets/Statlog+%28German+Credit+Data%29>
 
 
