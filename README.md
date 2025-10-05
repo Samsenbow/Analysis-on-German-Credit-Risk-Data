@@ -2,7 +2,10 @@
 
 
 ## Project Overview
-Predicting credit default risk using machine learning models on the German Credit dataset.
+This project aims to develop and compare machine learning models to predict whether a credit applicant is likely to default or not based on demographic, financial, and loan-related factors.
+Using the German Credit dataset, the analysis explores logistic regression as a baseline model and applies regularized methods (Lasso, Ridge) and Random Forest to enhance prediction accuracy and interpretability.
+
+The goal is to identify the most influential variables contributing to credit risk and evaluate model performance using AUC, accuracy, and confusion matrices.
 - **Dataset Name:** German Credit Data
 
 - **Authors:** Hoffman, P. and K. Bach
@@ -24,6 +27,39 @@ Predicting credit default risk using machine learning models on the German Credi
 4. Random Forest
 5. XGBoost
 
+## Key Steps
+
+1. Data Cleaning & Preprocessing
+
+- Handle missing values and duplicates.
+
+- Convert categorical variables to dummy variables.
+
+- Detect and handle outliers (where appropriate).
+
+- Split the data into training and testing sets.
+
+2. Exploratory Data Analysis (EDA)
+
+- Visualize distributions and correlations.
+
+- Understand variable importance and potential multicollinearity.
+
+3. Modeling
+
+- Logistic Regression (baseline).
+
+- Lasso and Ridge (using glmnet and cv.glmnet).
+
+- Random Forest and XGBoost for comparison.
+
+4. Evaluation
+
+- AUC-ROC
+
+- Confusion matrix
+
+- Visualize ROC curves and feature importance.
 
 
 
