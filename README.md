@@ -1,4 +1,4 @@
-**German Credit Data - Risk Analysis**
+## **German Credit Data - Risk Analysis**
 
 
 ## Project Overview
