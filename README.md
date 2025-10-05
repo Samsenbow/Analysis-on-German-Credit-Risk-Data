@@ -92,7 +92,7 @@ These findings align with domain knowledge in credit risk assessment.
 
 ## Interpretation: How Feature Importance Aligns with Credit Risk Logic
 
-The feature importance results align well with established principles of credit risk assessment. The** checking account status** (checking_statusA14, checking_statusA11) emerged as the most influential factor, which makes intuitive sense — customers without an active checking account or with a negative balance often exhibit higher default risk due to weaker financial discipline, limited financial integration, or possible credit invisibility.
+The feature importance results align well with established principles of credit risk assessment. The **checking account status** (checking_statusA14, checking_statusA11) emerged as the most influential factor, which makes intuitive sense — customers without an active checking account or with a negative balance often exhibit higher default risk due to weaker financial discipline, limited financial integration, or possible credit invisibility.
 
 The **loan duration** and **credit amount** are also strong predictors: longer tenures and larger loans typically increase the probability of default because they extend exposure over time and place higher repayment burdens on borrowers (job loss, health issues, economic downturn, etc.). Similarly, **credit history** indicators such as past delays in payment (credit_historyA34) are classic measures of creditworthiness — borrowers with prior payment issues are statistically more likely to default. Further more, Delayed payments reveal:
   - Cash flow management issues
