@@ -1,0 +1,226 @@
+---
+title: "XGBOOST on German Credit Data"
+author: "Samara Senari"
+date: "2025-10-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r cars}
+# Load original data
+data <- read.table("german.data", header = FALSE)
+
+# Add column names
+colnames(data) <- c("checking_status", "duration", "credit_history", 
+                    "purpose", "credit_amount", "savings", 
+                    "employment", "installment_rate", "personal_status", 
+                    "other_debtors", "residence_since", "property",
+                    "age", "other_installments", "housing", 
+                    "existing_credits", "job", "num_dependents",
+                    "telephone", "foreign_worker", "class")
+
+# Convert categorical to factors
+categorical_cols <- c("checking_status", "credit_history", "purpose", 
+                      "savings", "employment", "personal_status", 
+                      "other_debtors", "property", "other_installments", 
+                      "housing", "job", "telephone", "foreign_worker")
+
+data[categorical_cols] <- lapply(data[categorical_cols], as.factor)
+
+# Recode target: 1 = Good, 0 = Bad 
+data$class <- ifelse(data$class == 1, 1, 0)
+data$class <- as.factor(data$class)
+
+# SPLIT
+set.seed(123)
+library(caret)
+train_index <- createDataPartition(data$class, p = 0.8, list = FALSE)
+train_data <- data[train_index, ]
+test_data <- data[-train_index, ]
+
+# VERIFY SPLIT
+cat("Train size:", nrow(train_data), "\n")
+cat("Test size:", nrow(test_data), "\n")
+cat("Total:", nrow(train_data) + nrow(test_data), "\n")
+cat("Should be 1000\n\n")
+
+# Check class distribution
+cat("Train class distribution:\n")
+print(table(train_data$class))
+cat("\nTest class distribution:\n")
+print(table(test_data$class))
+```
+
+
+
+```{r pressure, echo=FALSE}
+library(xgboost)
+
+# REMOVE the class column when creating matrices
+train_features <- train_data[, -which(names(train_data) == "class")]
+test_features <- test_data[, -which(names(test_data) == "class")]
+
+# Create model matrices
+x_train <- model.matrix(~ . - 1, train_features)  # -1 removes intercept
+x_test <- model.matrix(~ . - 1, test_features)
+
+# Extract target
+y_train <- as.numeric(train_data$class) - 1  # Convert to 0,1
+y_test <- as.numeric(test_data$class) - 1
+
+# VERIFY: x_train should NOT contain class!
+cat("Train matrix columns:\n")
+print(colnames(x_train))
+cat("\nDoes it contain 'class'?", "class" %in% colnames(x_train), "\n")
+
+# Create DMatrix
+dtrain <- xgb.DMatrix(data = x_train, label = y_train)
+dtest <- xgb.DMatrix(data = x_test, label = y_test)
+
+# VERIFY dimensions
+cat("\nTrain features:", ncol(x_train), "rows:", nrow(x_train), "\n")
+cat("Test features:", ncol(x_test), "rows:", nrow(x_test), "\n")
+cat("Train labels:", length(y_train), "\n")
+cat("Test labels:", length(y_test), "\n")
+
+# Train XGBoost
+params <- list(
+  objective = "binary:logistic",
+  eval_metric = "auc",
+  eta = 0.1,
+  max_depth = 4,
+  subsample = 0.8,
+  colsample_bytree = 0.8
+)
+
+set.seed(123)
+xgb_model <- xgb.train(
+  params = params,
+  data = dtrain,
+  nrounds = 100,
+  watchlist = list(train = dtrain, test = dtest),
+  early_stopping_rounds = 20,
+  verbose = 1
+)
+
+# Predictions
+xgb_pred_prob <- predict(xgb_model, dtest)
+xgb_pred_class <- ifelse(xgb_pred_prob > 0.5, 1, 0)
+xgb_pred_class <- as.factor(xgb_pred_class)
+
+# Evaluate
+test_data$class <- as.factor(as.numeric(test_data$class) - 1)
+confusionMatrix(xgb_pred_class, test_data$class, positive = "1")
+
+# AUC
+library(pROC)
+roc_xgb <- roc(y_test, xgb_pred_prob)
+cat("\nXGBoost AUC:", auc(roc_xgb), "\n")
+```
+
+
+comparison model performance
+
+```{r}
+library(ggplot2)
+
+# Create results dataframe
+model_results <- data.frame(
+  Model = c("Random Forest", "XGBoost", "Logistic Regression", 
+            "Ridge", "Lasso"),
+  AUC = c(0.760, 0.756, 0.730, 0.730, 0.710),
+  FN = c(40, 35, 33, 36, 37),
+  FP = c(12, 13, 21, 18, 21)
+)
+
+# AUC comparison
+ggplot(model_results, aes(x = reorder(Model, AUC), y = AUC, fill = Model)) +
+  geom_bar(stat = "identity", alpha = 0.8, width = 0.7) +
+  geom_text(aes(label = paste0(round(AUC*100, 1), "%")), 
+            hjust = -0.2, size = 5, fontface = "bold") +
+  coord_flip() +
+  scale_fill_brewer(palette = "Set2") +
+  ylim(0, 1) +
+  theme_minimal() +
+  labs(title = "Model Performance Comparison - German Credit Risk Analysis",
+       subtitle = "Test Set AUC Score (n=200)",
+       x = "", 
+       y = "AUC Score",
+       caption = "Random Forest achieves highest discriminative power") +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 16, face = "bold"),
+        plot.subtitle = element_text(size = 12),
+        axis.text = element_text(size = 12),
+        axis.title = element_text(size = 12))
+
+ggsave("model_comparison_auc.png", width = 10, height = 6, dpi = 300)
+```
+
+comparison prediction error
+
+
+```{r}
+# Reshape for grouped bar chart
+library(tidyr)
+
+error_data <- model_results %>%
+  select(Model, FN, FP) %>%
+  pivot_longer(cols = c(FN, FP), 
+               names_to = "Error_Type", 
+               values_to = "Count")
+
+ggplot(error_data, aes(x = reorder(Model, -Count), y = Count, fill = Error_Type)) +
+  geom_bar(stat = "identity", position = "dodge", alpha = 0.8) +
+  geom_text(aes(label = Count), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, size = 4) +
+  scale_fill_manual(values = c("FN" = "#e74c3c", "FP" = "#f39c12"),
+                    labels = c("False Negatives (Bad approved)", 
+                              "False Positives (Good rejected)")) +
+  theme_minimal() +
+  labs(title = "Prediction Errors by Model",
+       subtitle = "False Negatives are more costly in credit risk",
+       x = "Model", 
+       y = "Number of Errors",
+       fill = "Error Type") +
+  theme(plot.title = element_text(size = 16, face = "bold"),
+        plot.subtitle = element_text(size = 11, color = "gray30"),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 11),
+        legend.position = "top")
+
+ggsave("model_comparison_errors.png", width = 10, height = 6, dpi = 300)
+```
+
+comparison ROC
+
+```{r}
+library(pROC)
+
+# Assuming you saved the probability predictions
+# Plot all ROC curves together
+plot(roc_rf, col = "#2ecc71", lwd = 3, main = "ROC Curves - Model Comparison")
+lines(roc_xgb, col = "#3498db", lwd = 3)
+lines(roc_logit, col = "#e74c3c", lwd = 2)
+lines(roc_ridge, col = "#9b59b6", lwd = 2)
+lines(roc_lasso, col = "#95a5a6", lwd = 2)
+abline(a = 0, b = 1, lty = 2, col = "gray50")
+
+legend("bottomright", 
+       legend = c(
+         paste("Random Forest (AUC =", round(auc(roc_rf), 3), ")"),
+         paste("XGBoost (AUC =", round(auc(roc_xgb), 3), ")"),
+         paste("Logistic (AUC =", round(auc(roc_logit), 3), ")"),
+         paste("Ridge (AUC =", round(auc(roc_ridge), 3), ")"),
+         paste("Lasso (AUC =", round(auc(roc_lasso), 3), ")")
+       ),
+       col = c("#2ecc71", "#3498db", "#e74c3c", "#9b59b6", "#95a5a6"),
+       lwd = 3,
+       cex = 0.9,
+       bty = "n")
+```
+

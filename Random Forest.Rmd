@@ -1,0 +1,185 @@
+---
+title: "Random Forest"
+author: "Samara Senari"
+date: "2025-10-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
+```{r}
+# Load the german.data file
+data <- read.table("german.data", header = FALSE)
+
+# Add column names
+colnames(data) <- c("checking_status", "duration", "credit_history", 
+                    "purpose", "credit_amount", "savings", 
+                    "employment", "installment_rate", "personal_status", 
+                    "other_debtors", "residence_since", "property",
+                    "age", "other_installments", "housing", 
+                    "existing_credits", "job", "num_dependents",
+                    "telephone", "foreign_worker", "class")
+
+# Convert categorical columns to factors
+categorical_cols <- c("checking_status", "credit_history", "purpose", 
+                      "savings", "employment", "personal_status", 
+                      "other_debtors", "property", "other_installments", 
+                      "housing", "job", "telephone", "foreign_worker")
+
+data[categorical_cols] <- lapply(data[categorical_cols], as.factor) # instead of using lappy (list apply) can use data$checking_status <- as.factor(data$checking_status) etc for all variables.
+
+
+# Convert target variable (1 = Good, 2 = Bad)
+# Let's recode: 1 = Good (1), 2 = Bad (0) for modeling
+data$class <- ifelse(data$class == 1, 1, 0)  # 1 = Good, 0 = Bad
+data$class <- as.factor(data$class)
+
+
+```
+
+
+
+
+```{r}
+# Set seed for reproducibility
+set.seed(123)
+
+# Load caret package
+library(caret)
+
+# Create 80/20 split
+trainIndex <- createDataPartition(data$class, p = 0.8, list = FALSE)
+train_data <- data[trainIndex, ]
+test_data <- data[-trainIndex, ]
+
+# Check dimensions
+dim(train_data) 
+dim(test_data)   
+
+# Check class distribution in both sets
+prop.table(table(train_data$class))
+prop.table(table(test_data$class))
+
+cat("\nTrain set size:", nrow(train_data), "\n")
+cat("Test set size:", nrow(test_data), "\n")
+cat("\nTrain set class distribution:\n")
+print(prop.table(table(train_data$class)))
+```
+
+
+
+Random Forest
+
+```{r}
+# ===== RANDOM FOREST =====
+library(randomForest)
+
+set.seed(123)
+rf_model <- randomForest(class ~ ., 
+                         data = train_data,
+                         ntree = 500,
+                         mtry = sqrt(ncol(train_data)-1),
+                         importance = TRUE)
+
+# Model summary
+print(rf_model)
+
+# Variable Importance
+#importance(rf_model)
+varImpPlot(rf_model, main = "Variable Importance - Random Forest")
+
+# Predictions
+rf_pred_class <- predict(rf_model, test_data)
+rf_pred_prob <- predict(rf_model, test_data, type = "prob")[, 2]
+
+# Confusion Matrix
+confusionMatrix(rf_pred_class, test_data$class, positive = "1")
+
+# ROC and AUC
+roc_rf <- roc(test_data$class, rf_pred_prob)
+auc_rf <- auc(roc_rf)
+cat("Random Forest AUC:", auc_rf, "\n")
+```
+tune mtry
+
+```{r}
+library(caret)
+
+# Define tuning grid
+rf_grid <- expand.grid(
+  mtry = c(3, 5, 7, 10)  # Number of variables at each split
+)
+
+# Cross-validation
+ctrl <- trainControl(method = "cv",
+                     number = 5,
+                     classProbs = TRUE,
+                     summaryFunction = twoClassSummary)
+
+# Prepare data
+train_data$class_label <- ifelse(train_data$class == 1, "Good", "Bad")
+train_data$class_label <- as.factor(train_data$class_label)
+
+set.seed(123)
+rf_tuned_new <- train(class_label ~ . - class,
+                  data = train_data,
+                  method = "rf",
+                  trControl = ctrl,
+                  tuneGrid = rf_grid,
+                  metric = "ROC",
+                  ntree = 500)
+
+print(rf_tuned_new)
+
+# Predict on test
+test_data$class_label <- ifelse(test_data$class == 1, "Good", "Bad")
+test_data$class_label <- as.factor(test_data$class_label)
+
+rf_tuned_pred <- predict(rf_tuned_new, test_data)
+confusionMatrix(rf_tuned_pred, test_data$class_label, positive = "Good")
+```
+Tuned RF performed WORSE on test set!
+
+Original RF: AUC 76%, FN = 40
+Tuned RF: AUC ~72%, FN = 44
+
+Why? Cross-validation optimized for training data, but overfitted 
+
+```{r}
+plot(rf_tuned_new)
+```
+
+
+```{r}
+# Variable importance plot
+varImpPlot(rf_model, 
+           main = "Top Features - Random Forest",
+           n.var = 15,
+           col = "steelblue",
+           pch = 19)
+
+# Or with ggplot
+importance_df <- data.frame(
+  Feature = rownames(importance(rf_model)),
+  Importance = importance(rf_model)[, "MeanDecreaseGini"]
+)
+
+importance_df <- importance_df[order(-importance_df$Importance), ][1:15, ]
+
+ggplot(importance_df, aes(x = reorder(Feature, Importance), y = Importance)) +
+  geom_bar(stat = "identity", fill = "steelblue", alpha = 0.8) +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Top 15 Important Features - Random Forest",
+       subtitle = "Based on Mean Decrease in Gini",
+       x = "", y = "Importance Score") +
+  theme(plot.title = element_text(size = 14, face = "bold"))
+
+ggsave("feature_importance_rf.png", width = 10, height = 8, dpi = 300)
+```
+

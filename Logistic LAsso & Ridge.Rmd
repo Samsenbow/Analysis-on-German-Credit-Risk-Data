@@ -1,0 +1,339 @@
+---
+title: "Logistic, Lasso & Ridge"
+author: "Samara Senari"
+date: "2025-10-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+ 
+Let's start with the logistic model as base model
+
+
+```{r}
+library(tidyverse)     
+library(DataExplorer)  
+library(skimr)
+```
+
+load data
+
+```{r}
+# Load the german.data file
+data <- read.table("german.data", header = FALSE)
+
+# Add column names
+colnames(data) <- c("checking_status", "duration", "credit_history", 
+                    "purpose", "credit_amount", "savings", 
+                    "employment", "installment_rate", "personal_status", 
+                    "other_debtors", "residence_since", "property",
+                    "age", "other_installments", "housing", 
+                    "existing_credits", "job", "num_dependents",
+                    "telephone", "foreign_worker", "class")
+
+# Convert categorical columns to factors
+categorical_cols <- c("checking_status", "credit_history", "purpose", 
+                      "savings", "employment", "personal_status", 
+                      "other_debtors", "property", "other_installments", 
+                      "housing", "job", "telephone", "foreign_worker")
+
+data[categorical_cols] <- lapply(data[categorical_cols], as.factor) # instead of using lappy (list apply) can use data$checking_status <- as.factor(data$checking_status) etc for all variables.
+
+
+# Convert target variable (1 = Good, 2 = Bad)
+# Let's recode: 1 = Good (1), 2 = Bad (0) for modeling
+data$class <- ifelse(data$class == 1, 1, 0)  # 1 = Good, 0 = Bad
+data$class <- as.factor(data$class)
+```
+
+
+
+```{r}
+# Set seed for reproducibility
+set.seed(123)
+
+# Load caret package
+library(caret)
+
+# Create 80/20 split
+trainIndex <- createDataPartition(data$class, p = 0.8, list = FALSE)
+train_data <- data[trainIndex, ]
+test_data <- data[-trainIndex, ]
+
+# Check dimensions
+dim(train_data) 
+dim(test_data)   
+
+# Check class distribution in both sets
+prop.table(table(train_data$class))
+prop.table(table(test_data$class))
+
+cat("\nTrain set size:", nrow(train_data), "\n")
+cat("Test set size:", nrow(test_data), "\n")
+cat("\nTrain set class distribution:\n")
+print(prop.table(table(train_data$class)))
+```
+
+Logistic model 
+
+```{r}
+library(caret)
+
+# Train logistic regression
+set.seed(123)
+logit_model <- glm(class ~ ., 
+                   data = train_data, 
+                   family = binomial(link = "logit"))
+
+
+# Predictions on test set
+logit_pred_prob <- predict(logit_model, test_data, type = "response")
+logit_pred_class <- ifelse(logit_pred_prob > 0.5, 1, 0)
+logit_pred_class <- as.factor(logit_pred_class)
+
+# Confusion Matrix
+confusionMatrix(logit_pred_class, test_data$class, positive = "1")
+
+# ROC Curve and AUC
+library(pROC)
+roc_logit <- roc(test_data$class, logit_pred_prob)
+auc_logit <- auc(roc_logit)
+cat("Logistic Regression AUC:", auc_logit, "\n")
+
+plot(roc_logit, main = "ROC Curve - Logistic Regression",
+     col = "blue", lwd = 2)
+```
+
+
+ROC curve shows the tradeoff between true positive rate and false positive rate. AUC = 0.73. Fairly okay as a baseline model.
+
+
+AUC = Area Under the ROC Curve. higher AUC = better model at ranking positive cases higher than negative cases.
+
+AUC is the probability that the model gives a higher predicted probability of default to the actual defaulter than to the non-defaulter.
+
+
+```{r}
+summary(logit_model)
+```
+According to this result we can see below mentioned features are the significant. That means we can reject the null hypothesis and hence  relevant coefficients are likely non zero.
+
+
+checking_statusA13, checking_statusA14
+credit_historyA34
+purposeA41, purposeA42, purposeA43, purposeA49
+credit_amount
+savingsA64, savingsA65
+installment_rate
+foreign_workerA202
+
+
+
+
+Lasso
+
+
+```{r}
+
+library(glmnet)
+
+# Prepare data for glmnet (needs matrix format)
+x_train <- model.matrix(class ~ ., train_data)[, -1]  # Remove intercept
+y_train <- train_data$class
+
+x_test <- model.matrix(class ~ ., test_data)[, -1]
+y_test <- test_data$class
+
+# Find optimal lambda using cross-validation  - 10 fold default
+set.seed(123)
+lasso_model <- cv.glmnet(x_train, y_train, 
+                      alpha = 1,  # alpha = 1 for Lasso
+                      family = "binomial",
+                      type.measure = "auc")
+
+# Plot cross-validation results
+plot(lasso_model)
+
+# Best lambda
+cat("Optimal lambda:", lasso_model$lambda.min, "\n")
+
+# this is lambda corresponding to minimum MSE seen during CV
+```
+```{r}
+# View coefficients 
+lasso_coef <- coef(lasso_model)
+cat("\nNon-zero coefficients (selected features):\n")
+print(lasso_coef[lasso_coef[,1] != 0, ])
+
+# Predictions
+lasso_pred_prob <- predict(lasso_model, x_test, type = "response", s = "lambda.min")
+lasso_pred_class <- ifelse(lasso_pred_prob > 0.5, 1, 0)
+lasso_pred_class <- as.factor(lasso_pred_class)
+
+# Confusion Matrix
+confusionMatrix(lasso_pred_class, test_data$class, positive = "1")
+
+# ROC and AUC
+roc_lasso <- roc(test_data$class, as.numeric(lasso_pred_prob))
+auc_lasso <- auc(roc_lasso)
+cat("Lasso AUC:", auc_lasso, "\n")
+```
+
+AUC dropped!
+
+
+Ridge
+
+```{r}
+
+
+# Find optimal lambda
+set.seed(123)
+ridge_model <- cv.glmnet(x_train, y_train, 
+                      alpha = 0,  # alpha = 0 for Ridge
+                      family = "binomial",
+                      type.measure = "auc")
+
+plot(ridge_model)
+
+# Train Ridge
+#ridge_model <- glmnet(x_train, y_train, 
+ #                     alpha = 0, 
+  #                    family = "binomial",
+   #                   lambda = cv_ridge$lambda.min)
+
+# Predictions
+ridge_pred_prob <- predict(ridge_model, x_test, type = "response", s = "lambda.min")
+ridge_pred_class <- ifelse(ridge_pred_prob > 0.5, 1, 0)
+ridge_pred_class <- as.factor(ridge_pred_class)
+
+# Confusion Matrix
+confusionMatrix(ridge_pred_class, test_data$class, positive = "1")
+
+# ROC and AUC
+roc_ridge <- roc(test_data$class, as.numeric(ridge_pred_prob))
+auc_ridge <- auc(roc_ridge)
+cat("Ridge AUC:", auc_ridge, "\n")
+```
+
+
+```{r}
+ridge_model$lambda.min
+lasso_model$lambda.min
+```
+
+
+0btain relevant coefficients when s = lambda min
+
+
+```{r}
+# Get coefficients from the best models
+ridge_coef <- coef(ridge_model, s = "lambda.min")
+lasso_coef <- coef(lasso_model, s = "lambda.min")
+
+# Compare coefficient patterns
+cat("Ridge: Number of non-zero coefficients:", sum(ridge_coef != 0) - 1, "\n") # -1 for intercept
+cat("Lasso: Number of non-zero coefficients:", sum(lasso_coef != 0) - 1, "\n")
+
+# Look at the largest coefficients
+ridge_coef_df <- data.frame(
+  feature = rownames(ridge_coef)[-1],  # remove intercept
+  coefficient = as.numeric(ridge_coef[-1])
+) %>% arrange(desc(abs(coefficient)))
+
+lasso_coef_df <- data.frame(
+  feature = rownames(lasso_coef)[-1],
+  coefficient = as.numeric(lasso_coef[-1])
+) %>% arrange(desc(abs(coefficient)))
+
+print("Top 10 features by magnitude (Ridge):")
+head(ridge_coef_df, 10)
+
+print("Top 10 features by magnitude (Lasso):")
+head(lasso_coef_df, 10)
+```
+
+
+```{r}
+# Convert to class predictions (using 0.5 as threshold)
+logistic_class <- ifelse(logit_pred_prob > 0.5, 1, 0)
+ridge_class <- ifelse(ridge_pred_prob > 0.5, 1, 0) 
+lasso_class <- ifelse(lasso_pred_prob > 0.5, 1, 0)
+
+# Calculate accuracy
+logistic_acc <- mean(logistic_class == y_test)
+ridge_acc <- mean(ridge_class == y_test)
+lasso_acc <- mean(lasso_class == y_test)
+
+# Create comparison table
+results <- data.frame(
+  Model = c("Logistic Regression", "Ridge", "Lasso"),
+  Accuracy = c(logistic_acc, ridge_acc, lasso_acc),
+  Num_Features = c(ncol(x_train), sum(ridge_coef != 0) - 1, sum(lasso_coef != 0) - 1)
+)
+
+print(results)
+```
+
+This is the key insight: Lasso performed feature selection by setting 23 coefficients to zero, while maintaining 71% accuracy.
+
+
+```{r}
+library(ggplot2)
+
+# Compare coefficient magnitudes
+coef_comparison <- data.frame(
+  Feature = ridge_coef_df$feature,
+  Ridge = ridge_coef_df$coefficient,
+  Lasso = lasso_coef_df$coefficient[match(ridge_coef_df$feature, lasso_coef_df$feature)]
+) %>% 
+  arrange(desc(abs(Ridge))) %>%
+  head(15)  # Top 15 features by ridge magnitude
+
+# Create a comparison plot
+coef_comparison_long <- coef_comparison %>%
+  tidyr::pivot_longer(cols = c(Ridge, Lasso), names_to = "Model", values_to = "Coefficient")
+
+ggplot(coef_comparison_long, aes(x = reorder(Feature, abs(Coefficient)), y = Coefficient, fill = Model)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  coord_flip() +
+  labs(title = "Coefficient Comparison: Ridge vs Lasso",
+       x = "Features", y = "Coefficient Value") +
+  theme_minimal()
+```
+
+perform lasso when lambda = lasso_model$lambda.min using glmnet and obtain the features selected by lasso. (tune)
+
+
+
+```{r}
+# Get the non-zero coefficients from Lasso
+lasso_final <- glmnet(x_train, y_train, alpha = 1, lambda = lasso_model$lambda.min, family = "binomial")
+lasso_coef <- coef(lasso_final)
+
+# Extract features that were NOT eliminated
+selected_features <- rownames(lasso_coef)[which(lasso_coef != 0)]
+selected_features <- selected_features[selected_features != "(Intercept)"]
+
+cat("Features selected by Lasso:", length(selected_features), "\n")
+print(selected_features)
+```
+
+See how factors increase/decrease default risk
+
+```{r}
+coef_df <- data.frame(
+  feature = rownames(coef(lasso_final)),
+  coefficient = as.numeric(coef(lasso_final))
+) %>% 
+  filter(feature != "(Intercept)" & coefficient != 0) %>%
+  arrange(desc(abs(coefficient)))
+
+print("Top risk factors (by coefficient magnitude):")
+head(coef_df, 25)
+```
+

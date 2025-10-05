@@ -1,0 +1,231 @@
+---
+title: "Exploratory Analysis"
+author: "Samara Senari"
+date: "2025-10-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)     
+library(DataExplorer)  
+library(skimr)
+```
+
+
+
+```{r}
+# Load the german.data file
+data <- read.table("german.data", header = FALSE)
+
+# Add column names
+colnames(data) <- c("checking_status", "duration", "credit_history", 
+                    "purpose", "credit_amount", "savings", 
+                    "employment", "installment_rate", "personal_status", 
+                    "other_debtors", "residence_since", "property",
+                    "age", "other_installments", "housing", 
+                    "existing_credits", "job", "num_dependents",
+                    "telephone", "foreign_worker", "class")
+
+# Check the data
+head(data)
+dim(data)
+str(data)
+```
+
+
+handle those categorical variables. In the German credit dataset, codes like A11, A12, etc. represent different categories. keep codes as factors as below
+
+
+```{r}
+# Convert categorical columns to factors
+categorical_cols <- c("checking_status", "credit_history", "purpose", 
+                      "savings", "employment", "personal_status", 
+                      "other_debtors", "property", "other_installments", 
+                      "housing", "job", "telephone", "foreign_worker")
+
+data[categorical_cols] <- lapply(data[categorical_cols], as.factor) # instead of using lappy (list apply) can use data$checking_status <- as.factor(data$checking_status) etc for all variables.
+
+
+# Convert target variable (1 = Good, 2 = Bad)
+# Let's recode: 1 = Good (1), 2 = Bad (0) for modeling
+data$class <- ifelse(data$class == 1, 1, 0)  # 1 = Good, 0 = Bad
+data$class <- as.factor(data$class)
+
+# Check
+str(data)
+```
+
+
+```{r}
+summary(data)
+```
+check for missing values
+
+
+```{r}
+sum(is.na(data))  # Total missing values
+colSums(is.na(data))  # Missing values per column
+```
+
+No missing values appeared. Good!
+
+
+
+Duplicates
+
+
+```{r}
+sum(duplicated(data))
+```
+
+No duplicates!
+
+
+
+
+
+
+
+
+outliers
+
+
+```{r}
+# Get numerical columns only
+numerical_cols <- c("duration", "credit_amount", "installment_rate", 
+                    "residence_since", "age", "existing_credits", 
+                    "num_dependents")
+
+
+summary(data[numerical_cols])
+
+# Boxplots to visualize outliers
+library(ggplot2)
+library(tidyr)
+
+# Reshape data for plotting
+data_long <- data[numerical_cols] %>%
+  pivot_longer(cols = everything(), 
+               names_to = "variable", 
+               values_to = "value")
+
+# Create boxplots
+ggplot(data_long, aes(x = variable, y = value)) +
+  geom_boxplot(fill = "steelblue", alpha = 0.7) +
+  facet_wrap(~variable, scales = "free") +
+  theme_minimal() +
+  labs(title = "Boxplots of Numerical Variables",
+       x = "", y = "Value") +
+  theme(axis.text.x = element_blank())
+```
+
+Basic Exploratory Data Analysis
+
+
+
+```{r}
+# Check class distribution
+table(data$class)
+prop.table(table(data$class))
+
+# Visualize class distribution
+ggplot(data, aes(x = class, fill = class)) +
+  geom_bar() +
+  geom_text(stat='count', aes(label=..count..), vjust=-0.5) +
+  theme_minimal() +
+  labs(title = "Distribution of Credit Risk",
+       x = "Credit Risk (0=Bad, 1=Good)",
+       y = "Count")
+
+
+# Credit amount by class
+ggplot(data, aes(x = class, y = credit_amount, fill = class)) +
+  geom_boxplot(alpha = 0.7) +
+  theme_minimal() +
+  labs(title = "Credit Amount by Risk Class",
+       x = "Credit Risk (0=Bad, 1=Good)",
+       y = "Credit Amount (DM)")
+```
+
+
+
+
+70% good credit and 30% bad. realistic situation. 
+
+
+plot histograms for numerical variables
+
+
+```{r}
+# Age distribution
+ggplot(data, aes(x = age)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "black", alpha = 0.7) +
+  theme_minimal() +
+  labs(title = "Age Distribution", x = "Age", y = "Count")
+
+#credit amount distributio
+ggplot(data, aes(x = credit_amount)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "black", alpha = 0.7) +
+  theme_minimal() +
+  labs(title = "Credit Amount Distribution", x = "Credit Amount", y = "Count")
+
+#duration
+
+ggplot(data, aes(x = duration)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "black", alpha = 0.7) +
+  theme_minimal() +
+  labs(title = "Credit duration Distribution", x = "months", y = "Count")
+```
+all three distributions are positively skewed. Realistic. 
+in credit data, extreme values for age, credit amount, or duration are not errors, they are part of the real distribution. This is called a “heavy-tailed” distribution, and outliers here are meaningful.
+
+```{r}
+max(data$credit_amount)
+min(data$credit_amount)
+```
+
+
+
+
+
+So we need to treat them carefully, not just remove them.
+
+
+```{r}
+
+par(mfrow=c(2,2))
+# installment_rate distribution
+
+# installment rate is the percentage of the installment rate in percentage of disposable income. 
+
+graph1 <- ggplot(data, aes(x = installment_rate)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "black", alpha = 0.7) +
+  theme_minimal() +
+  labs(title = "installment_rate Distribution", x = "installment_rate", y = "Count")
+
+
+
+# resident since distribution
+graph2 <- ggplot(data, aes(x = residence_since)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "black", alpha = 0.7) +
+  theme_minimal() +
+  labs(title = "residence_since Distribution", x = "years", y = "Count")
+
+
+# number of dependents distribution
+graph3 <- ggplot(data, aes(x = num_dependents)) +
+  geom_histogram(bins = 30, fill = "steelblue", color = "black", alpha = 0.7) +
+  theme_minimal() +
+  labs(title = "num_dependents Distribution", x = "num_dependence", y = "Count")
+
+par(mfrow=c(2,2))
+plot(graph1)
+plot(graph2)
+plot(graph3)
+
+```
+
