@@ -70,10 +70,6 @@ The goal is to identify the most influential variables contributing to credit ri
 - pROC, ggplot2
 
 
-
-Lasso regression identified **25 key predictive features** with only 2% AUC loss
-
-
 ### Key Predictive Features (XGBoost)
 
 The XGBoost model identified the following as most important for credit risk:
@@ -98,6 +94,7 @@ These findings align with domain knowledge in credit risk assessment.
 
 
 
+Lasso regression identified **25 key predictive features** with only 2% AUC loss
 
 **Reasons for selecting German Credit Risk data**
 
