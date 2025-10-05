@@ -74,10 +74,24 @@ The goal is to identify the most influential variables contributing to credit ri
 Lasso regression identified **25 key predictive features** with only 2% AUC loss
 
 
+### Key Predictive Features (XGBoost)
 
+The XGBoost model identified the following as most important for credit risk:
 
+These findings align with domain knowledge in credit risk assessment.
 
-
+| Rank | Feature              |    Gain   | Interpretation                                    |
+| :--: | :------------------- | :-------: | :------------------------------------------------ |
+|   1  | `checking_statusA14` | **0.235** | No checking account — *most important predictor!* |
+|   2  | `duration`           |   0.133   | Loan duration (in months)                         |
+|   3  | `credit_amount`      |   0.109   | Loan amount (in Deutsche Marks)                   |
+|   4  | `age`                |   0.082   | Customer’s age                                    |
+|   5  | `credit_historyA34`  |   0.053   | Credit history: “delay in paying off in the past” |
+|   6  | `savingsA65`         |   0.048   | Savings: “unknown/no savings account”             |
+|   7  | `purposeA41`         |   0.044   | Loan purpose: “used car”                          |
+|   8  | `checking_statusA11` |   0.036   | Checking account: “< 0 DM” (negative balance)     |
+|   9  | `installment_rate`   |   0.031   | Installment rate as % of disposable income        |
+|  10  | `jobA174`            |   0.022   | Job type: “skilled employee/official”             |
 
 
 
