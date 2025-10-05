@@ -62,19 +62,28 @@ The goal is to identify the most influential variables contributing to credit ri
 - Visualize ROC curves and feature importance.
 
 
-
-
-
-
-
-
-
 ## Technologies Used
 - R, tidyverse, caret
 - glmnet (Lasso/Ridge)
 - randomForest
 - xgboost
 - pROC, ggplot2
+
+
+
+Lasso regression identified **25 key predictive features** with only 2% AUC loss
+
+
+
+
+
+
+
+
+
+
+
+
 
 **Reasons for selecting German Credit Risk data**
 
