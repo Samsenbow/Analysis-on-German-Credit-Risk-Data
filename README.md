@@ -3,6 +3,14 @@
 
 ## Project Overview
 Predicting credit default risk using machine learning models on the German Credit dataset.
+- **Dataset Name:** German Credit Data
+
+- **Authors:** Hoffman, P. and K. Bach
+
+- **Publisher:** UCI Machine Learning Repository
+
+- **URL:**<https://archive.ics.uci.edu/ml/datasets/Statlog+%28German+Credit+Data%29>
+
 
 ## Key Results
 - **Best AUC:** Random Forest (76%)
@@ -17,31 +25,20 @@ Predicting credit default risk using machine learning models on the German Credi
 5. XGBoost
 
 
-README.md should include:
-
-Project purpose
-
-Dataset source (UCI/Kaggle)
-
-Methods used (EDA, logistic regression, evaluation)
-
-Key findings
-
-Tools used: R, ggplot2, caret, etc.
-
-
-
-Dataset Name: German Credit Data
-
-Authors: Hoffman, P. and K. Bach
-
-Publisher: UCI Machine Learning Repository
-
-URL:<https://archive.ics.uci.edu/ml/datasets/Statlog+%28German+Credit+Data%29>
 
 
 
 
+
+
+
+
+## Technologies Used
+- R, tidyverse, caret
+- glmnet (Lasso/Ridge)
+- randomForest
+- xgboost
+- pROC, ggplot2
 
 **Reasons for selecting German Credit Risk data**
 
