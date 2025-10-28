@@ -38,7 +38,7 @@ Examining the distributions of numerical variables:
 
 - age, credit_amount, credit_duration, number_of_dependents, and existing_credits are positively skewed, which aligns with realistic scenarios.
 - installment_rate (the percentage of income used for installments) is negatively skewed.
-- purpose
+- Loans for radio/TV accounted for the highest proportion (28%) of all applications, followed by new car (23.4%) and furniture/equipment (18.1%) purposes. (Figure 4)
 
 
 <p align="center">
@@ -56,7 +56,7 @@ Examining the distributions of numerical variables:
 </p>
 <p align="center">
   <b>Figure 3:</b> Age Distribution &nbsp;&nbsp;&nbsp;&nbsp;
-  <b>Figure 2:</b> Purpose Distribution &nbsp;&nbsp;&nbsp;&nbsp;  
+  <b>Figure 4:</b> Purpose Distribution &nbsp;&nbsp;&nbsp;&nbsp;  
 </p>
 
 
