@@ -20,14 +20,6 @@ The objective is to:
 - **URL:**<https://archive.ics.uci.edu/ml/datasets/Statlog+%28German+Credit+Data%29>
 
 
-## Key Results
-- **Best AUC:** Random Forest (76%)
-- **Fewest Errors:** XGBoost (48 total errors)
-- **Feature Selection:** Lasso identified 25 critical features
-
-
-
-
 ## Methodology
 
 ### Data Cleaning and Preprocessing
@@ -47,9 +39,25 @@ Examining the distributions of numerical variables:
 - age, credit_amount, credit_duration, number_of_dependents, and existing_credits are positively skewed, which aligns with realistic scenarios.
 - installment_rate (the percentage of income used for installments) is negatively skewed.
 
+<p align="center">
+  <img src="Loss%20vs%20Normal%20Loss.png" alt="Loss Histogram" width="400">
+  <img src="Loss%20Vs%20t%20Loss.png" alt="Loss Vs t Loss" width="400">
+</p>
+<p align="center">
+  <b>Figure 2:</b> Portfolio loss histogram with Normal distribution overlay. &nbsp;&nbsp;&nbsp;&nbsp;
+  <b>Figure 3:</b> Portfolio loss histogram with t-distribution overlay.
+</p>
 
 
 
+
+
+
+
+## Key Results
+- **Best AUC:** Random Forest (76%)
+- **Fewest Errors:** XGBoost (48 total errors)
+- **Feature Selection:** Lasso identified 25 critical features
 
 
 
