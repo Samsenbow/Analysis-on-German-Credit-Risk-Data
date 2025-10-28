@@ -59,7 +59,7 @@ Examining the distributions of numerical variables:
   <b>Figure 4:</b> Purpose Distribution &nbsp;&nbsp;&nbsp;&nbsp;  
 </p>
 
-#### Cross Tabulation Results
+##### Cross Tabulation Results
 **1. Checking Account Status (checking_status)**
 
 A total of 394 clients (39.4%) have no checking account (A14), and 348 of them (88%) are classified as good credit risks. Conversely, clients with negative or low balances (A11, A12) represent a substantial portion of the dataset (about 54%), indicating that many applicants hold limited liquidity. Interestingly, even among clients with no checking account, a majority still maintain good credit, suggesting that the absence of an account does not necessarily imply poor creditworthiness in this dataset. However, the relative proportion of bad credit cases is slightly higher among low or negative balance categories (A11, A12), indicating some association between checking status and credit class.
@@ -75,24 +75,36 @@ This implies that loan purpose varies widely, but purpose alone may not strongly
 
 **4. Savings Account Balance (Savings)**
    
-Most applicants (60%) have very low savings (<100 DM), and this group shows the highest proportion of bad credit cases, indicating a potential link between limited financial reserves and increased default risk. However, clients with higher savings or with “unknown/no savings account” status tend to have predominantly good credit ratings, suggesting that wealthier or financially established applicants are generally more creditworthy.
+Most applicants (64%) have very low savings (<100 DM), and this group shows the highest proportion of bad credit cases, indicating a potential link between limited financial reserves and increased default risk. However, clients with higher savings or with “unknown/no savings account” status tend to have predominantly good credit ratings, suggesting that wealthier or financially established applicants are generally more creditworthy.
 
 **6. Employment**
    
-Clients with longer employment histories show higher chances of good credit status, while those unemployed or newly employed are more likely to default.
+Clients with longer employment histories show higher chances of good credit status, while those unemployed or newly employed are more likely to default (more than 30%).
 
 
 **7. Other variables (summary)**
 
-Personal status: Married or male borrowers tend to have more good credits.
+Personal status: Overall male borrowers tend to have more good credits.
 
 Other debtors: Most applicants are sole borrowers (A101), and these tend to be more creditworthy.
 
-Property: Owning property (A121, A122) is linked to higher good credit rates.
+Property: Owning property (A121, A122) is linked to higher good credit rates. Unknown/no property category holds higher default percentage 43.5%
 
 Housing: People with rented or own housing have higher good credit proportions than those with free housing.
 
+Other instalment plans: Majority (81%) do not own an instalment plans and hold 27% default rate.
+
 Telephone, job, and foreign worker status show similar trends — better socioeconomic conditions correlate with good credit.
+
+
+#### Multicollinearity Analysis
+
+To identify potential multicollinearity among numerical variables, a correlation heatmap was generated. Most correlations were weak to moderate, indicating no severe multicollinearity in the dataset.
+
+The highest correlation was observed between credit amount and duration (0.62), which is expected — longer credit durations typically correspond to larger loan amounts.
+Other notable relationships include a negative correlation between installment rate and credit amount (-0.27), and a positive correlation between age and residence duration (0.27).
+
+Overall, the correlation values suggest that no strong multicollinearity issue exists, and all variables were retained for modeling.
 
 
 
