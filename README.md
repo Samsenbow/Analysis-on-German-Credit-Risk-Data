@@ -113,6 +113,41 @@ Overall, the correlation values suggest that no strong multicollinearity issue e
   <b>Figure 5:</b> Heat map.
 </p>
 
+## Modeling
+
+To predict credit risk (good vs. bad credit), several supervised machine learning models were developed and evaluated.
+The dataset was split into 80% training and 20% testing subsets.
+Model performance was assessed based on accuracy, AUC, sensitivity, and specificity metrics.
+
+### Logistic Regression 
+
+A logistic regression model was fitted using the glm() function with a binomial family. This served as the baseline model for comparison.
+
+### Regularized Logistic Regression (Lasso & Ridge)
+
+To improve the baseline model and handle potential multicollinearity, regularized logistic regression methods were applied:
+
+- Lasso (L1 penalty) – encourages sparsity by shrinking less important coefficients to zero, effectively performing variable selection.
+
+- Ridge (L2 penalty) – penalizes large coefficients and helps reduce model variance.
+
+Both models were trained using cross-validation to determine the optimal regularization parameter (lambda).
+
+**Performances and Model Complexities**
+
+| Model                   | Accuracy | AUC  | Non-Zero Coefficients |
+| :---------------------- | :------- | :--- | :-------------------- |
+| Logistic Regression     | 0.73     | 0.73 | 48                    |
+| Ridge                   | 0.73     | 0.73 | 48                    |
+| Lasso                   | 0.71     | 0.70 | 25                    |
+
+All three linear models achieved similar accuracy levels (~0.71–0.73).
+However, Lasso reduced the number of active predictors from 48 to 25, providing a more interpretable and parsimonious model.
+Ridge regression, while retaining all features, offered slightly higher AUC and stability by shrinking coefficients without eliminating them.
+
+Overall, regularization improved model generalization and revealed which variables contribute most strongly to credit risk prediction.
+
+
 ## Key Results
 - **Best AUC:** Random Forest (76%)
 - **Fewest Errors:** XGBoost (48 total errors)
