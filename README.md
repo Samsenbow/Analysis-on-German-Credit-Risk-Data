@@ -147,6 +147,27 @@ Ridge regression, while retaining all features, offered slightly higher AUC and 
 
 Overall, regularization improved model generalization and revealed which variables contribute most strongly to credit risk prediction.
 
+### Random Forest
+To capture potential nonlinear relationships and feature interactions, a Random Forest classifier was trained with 500 trees and mtry = sqrt(number of features).
+
+Performance Summary
+| Model             | Accuracy | AUC  | Sensitivity | Specificity | Balanced Accuracy |
+| :---------------- | :------- | :--- | :---------- | :---------- | :---------------- |
+| Random Forest     | 0.74     | 0.76 | 0.91        | 0.33        | 0.62              |
+
+- Accuracy slightly improves to 0.74, and AUC increases to 0.76, suggesting better discrimination compared to logistic regression.
+
+- Sensitivity is very high (0.91), meaning the model correctly identifies most of the good credit cases.
+
+- Specificity is lower (0.33), so the model is less accurate in identifying bad credit cases.
+
+- Random Forest captures nonlinearities and interactions in the data, which can explain the slight improvement over linear models.
+
+- The model also provides feature importance, helping to identify the most influential predictors in credit risk classification.
+
+
+
+
 
 ## Key Results
 - **Best AUC:** Random Forest (76%)
@@ -155,54 +176,7 @@ Overall, regularization improved model generalization and revealed which variabl
 
 
 
-## Models Compared
-1. Logistic Regression (baseline)
-2. Lasso Regression (L1 regularization)
-3. Ridge Regression (L2 regularization)
-4. Random Forest
-5. XGBoost
 
-## Key Steps
-
-1. Data Cleaning & Preprocessing
-
-- Handle missing values and duplicates.
-
-- Convert categorical variables to dummy variables.
-
-- Detect and handle outliers (where appropriate).
-
-- Split the data into training and testing sets.
-
-2. Exploratory Data Analysis (EDA)
-
-- Visualize distributions and correlations.
-
-- Understand variable importance and potential multicollinearity.
-
-3. Modeling
-
-- Logistic Regression (baseline).
-
-- Lasso and Ridge (using glmnet and cv.glmnet).
-
-- Random Forest and XGBoost for comparison.
-
-4. Evaluation
-
-- AUC-ROC
-
-- Confusion matrix
-
-- Visualize ROC curves and feature importance.
-
-
-## Technologies Used
-- R, tidyverse, caret
-- glmnet (Lasso/Ridge)
-- randomForest
-- xgboost
-- pROC, ggplot2
 
 
 ### Key Predictive Features (XGBoost)
@@ -223,6 +197,10 @@ These findings align with domain knowledge in credit risk assessment.
 |   8  | `checking_statusA11` |   0.036   | Checking account: “< 0 DM” (negative balance)     |
 |   9  | `installment_rate`   |   0.031   | Installment rate as % of disposable income        |
 |  10  | `jobA174`            |   0.022   | Job type: “skilled employee/official”             |
+
+
+
+
 
 
 ## Interpretation: How Feature Importance Aligns with Credit Risk Logic
