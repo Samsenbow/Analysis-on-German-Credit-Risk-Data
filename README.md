@@ -62,7 +62,7 @@ Examining the distributions of numerical variables:
 #### Cross Tabulation Results
 1. Checking Account Status (checking_status)
 
-- A total of 394 clients (39.4%) have no checking account (A14), and 348 of them (88%) are classified as good credit risks. Conversely, clients with negative or low balances (A11, A12) represent a substantial portion of the dataset (about 54%), indicating that many applicants hold limited liquidity. Interestingly, even among clients with no checking account, a majority still maintain good credit, suggesting that the absence of an account does not necessarily imply poor creditworthiness in this dataset. However, the relative proportion of bad credit cases is slightly higher among low or negative balance categories (A11, A12), indicating some association between checking status and credit class.
+A total of 394 clients (39.4%) have no checking account (A14), and 348 of them (88%) are classified as good credit risks. Conversely, clients with negative or low balances (A11, A12) represent a substantial portion of the dataset (about 54%), indicating that many applicants hold limited liquidity. Interestingly, even among clients with no checking account, a majority still maintain good credit, suggesting that the absence of an account does not necessarily imply poor creditworthiness in this dataset. However, the relative proportion of bad credit cases is slightly higher among low or negative balance categories (A11, A12), indicating some association between checking status and credit class.
 
 2. Credit History (credit_history)
 
@@ -74,13 +74,15 @@ The most common loan purposes are radio/TV (28%), new car (23.4%), and furniture
 This implies that loan purpose varies widely, but purpose alone may not strongly differentiate good vs. bad credit.
 
 4. Savings
-Most applicants (60^) have very low savings (<100 DM), and this group shows the highest proportion of bad credit cases, indicating a potential link between limited financial reserves and increased default risk. However, clients with higher savings or with “unknown/no savings account” status tend to have predominantly good credit ratings, suggesting that wealthier or financially established applicants are generally more creditworthy.
+   
+Most applicants (60%) have very low savings (<100 DM), and this group shows the highest proportion of bad credit cases, indicating a potential link between limited financial reserves and increased default risk. However, clients with higher savings or with “unknown/no savings account” status tend to have predominantly good credit ratings, suggesting that wealthier or financially established applicants are generally more creditworthy.
 
-5. Employment
+6. Employment
+   
 Clients with longer employment histories show higher chances of good credit status, while those unemployed or newly employed are more likely to default.
 
 
-7. Other variables (summary)
+8. Other variables (summary)
 
 Personal status: Married or male borrowers tend to have more good credits.
 
