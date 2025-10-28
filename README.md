@@ -135,11 +135,13 @@ Both models were trained using cross-validation to determine the optimal regular
 
 **Performances and Model Complexities**
 
-| Model                   | Accuracy | AUC  | Non-Zero Coefficients |
-| :---------------------- | :------- | :--- | :-------------------- |
-| Logistic Regression     | 0.73     | 0.73 | 48                    |
-| Ridge                   | 0.73     | 0.73 | 48                    |
-| Lasso                   | 0.71     | 0.70 | 25                    |
+| Model                   | Accuracy | AUC  | Sensitivity | Specificity | Balanced Accuracy | Non-Zero Features |
+| :---------------------- | :------- | :--- | :---------- | :---------- | :---------------- | :---------------- |
+| Logistic Regression     | 0.73     | 0.73 | 0.85        | 0.45        | 0.65              | 48                |
+| Ridge                   | 0.73     | 0.73 | 0.87        | 0.40        | 0.64              | 48                |
+| Lasso                   | 0.71     | 0.70 | 0.85        | 0.38        | 0.62              | 25                |
+
+
 
 All three linear models achieved similar accuracy levels (~0.71–0.73).
 However, Lasso reduced the number of active predictors from 48 to 25, providing a more interpretable and parsimonious model.
@@ -166,6 +168,7 @@ Performance Summary
 - The model also provides feature importance, helping to identify the most influential predictors in credit risk classification.
 
 
+### XGBoost
 
 
 
