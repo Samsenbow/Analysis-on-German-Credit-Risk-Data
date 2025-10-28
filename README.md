@@ -43,16 +43,16 @@ Examining the distributions of numerical variables:
 <p align="center">
   <img src="credit_amount_distribution.png" alt="Credit Amount Distribution" width="200">
   <img src="duration_distribution.png" alt="Credit Duration Distribution" width="200">
-  <img src="Age_distribution.png" alt="Age Distribution" width="200">
+  
 </p>
 <p align="center">
   <b>Figure 1:</b> Credit Amount Distribution &nbsp;&nbsp;&nbsp;&nbsp;
   <b>Figure 2:</b> Credit Duration Distribution &nbsp;&nbsp;&nbsp;&nbsp;
-  <b>Figure 3:</b> Age Distribution
+  
 </p>
 
-
-
+<img src="Age_distribution.png" alt="Age Distribution" width="200">
+<b>Figure 3:</b> Age Distribution
 ## Key Results
 - **Best AUC:** Random Forest (76%)
 - **Fewest Errors:** XGBoost (48 total errors)
