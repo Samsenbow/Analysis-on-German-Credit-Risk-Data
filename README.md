@@ -39,17 +39,6 @@ Examining the distributions of numerical variables:
 - age, credit_amount, credit_duration, number_of_dependents, and existing_credits are positively skewed, which aligns with realistic scenarios.
 - installment_rate (the percentage of income used for installments) is negatively skewed.
 
-<p align="center">
-  <img src="credit_amount_distribution.png" alt="Credit Amount Distribution" width="400">
-  <img src="duration_distribution.png" alt="Credit Duration Distribution" width="400">
-  <img src="Age_distribution.png" alt="Age Distribution" width="400">
-</p>
-<p align="center">
-  <b>Figure 1:</b> Credit Amount Distribution &nbsp;&nbsp;&nbsp;&nbsp;
-  <b>Figure 2:</b> Credit Duration Distribution &nbsp;&nbsp;&nbsp;&nbsp;
-  <b>Figure 3:</b> Age Distribution
-</p>
-
 
 
 
