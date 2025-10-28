@@ -50,7 +50,7 @@ Examining the distributions of numerical variables:
   <b>Figure 3:</b> Age Distribution
 </p>
 
-
+  
 
 
 
