@@ -40,12 +40,14 @@ Examining the distributions of numerical variables:
 - installment_rate (the percentage of income used for installments) is negatively skewed.
 
 <p align="center">
-  <img src="Loss%20vs%20Normal%20Loss.png" alt="Loss Histogram" width="400">
-  <img src="Loss%20Vs%20t%20Loss.png" alt="Loss Vs t Loss" width="400">
+  <img src="credi_amount_distribution.png" alt="Credit Amount Distribution" width="400">
+  <img src="duration_distribution.png" alt="Credit Duration Distribution" width="400">
+  <img src="Age_distribution.png" alt="Age Distribution" width="400">
 </p>
 <p align="center">
-  <b>Figure 2:</b> Portfolio loss histogram with Normal distribution overlay. &nbsp;&nbsp;&nbsp;&nbsp;
-  <b>Figure 3:</b> Portfolio loss histogram with t-distribution overlay.
+  <b>Figure 1:</b> Credit Amount Distribution. &nbsp;&nbsp;&nbsp;&nbsp;
+  <b>Figure 2:</b> Credit Duration Distribution.
+  <b>Figure 3:</b> Age Distribution.
 </p>
 
 
