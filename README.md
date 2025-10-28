@@ -2,10 +2,15 @@
 
 
 ## Project Overview
-This project aims to develop and compare machine learning models to predict whether a credit applicant is likely to default or not based on demographic, financial, and loan-related factors.
-Using the German Credit dataset, the analysis explores logistic regression as a baseline model and applies regularized methods (Lasso, Ridge) and Random Forest to enhance prediction accuracy and interpretability.
+This project develops and compares several machine learning models to predict whether a credit applicant is likely to default based on demographic, financial, and loan-related variables. Using the German Credit dataset from the UCI Machine Learning Repository, the analysis evaluates both linear and non-linear models to improve predictive performance and interpretability.
 
-The goal is to identify the most influential variables contributing to credit risk and evaluate model performance using AUC, accuracy, and confusion matrices.
+The objective is to:
+
+- Identify the most influential factors contributing to credit risk, and
+
+- Compare model performance using AUC, accuracy, and confusion matrices.
+
+  ### Dataset Information
 - **Dataset Name:** German Credit Data
 
 - **Authors:** Hoffman, P. and K. Bach
@@ -19,6 +24,34 @@ The goal is to identify the most influential variables contributing to credit ri
 - **Best AUC:** Random Forest (76%)
 - **Fewest Errors:** XGBoost (48 total errors)
 - **Feature Selection:** Lasso identified 25 critical features
+
+
+
+
+## Methodology
+
+### Data Cleaning and Preprocessing
+The dataset contains 1000 observations with 21 variables, of which 7 are numerical and 13 are categorical.
+
+- Missing values and duplicates: None were reported.
+
+- Categorical variables: Encoded using dummy variables.
+
+- Outliers: Detected in credit_amount and age, but these values were retained as they appear realistic in context.
+
+### Exploratory Data Analysis (EDA)
+Out of the 1000 observations, 700 were classified as good credit and 300 as bad credit.
+
+Examining the distributions of numerical variables:
+
+- age, credit_amount, credit_duration, number_of_dependents, and existing_credits are positively skewed, which aligns with realistic scenarios.
+- installment_rate (the percentage of income used for installments) is negatively skewed.
+
+
+
+
+
+
 
 ## Models Compared
 1. Logistic Regression (baseline)
