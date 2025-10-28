@@ -41,9 +41,9 @@ Examining the distributions of numerical variables:
 
 
 <p align="center">
-  <img src="credit_amount_distribution.png" alt="Credit Amount Distribution" width="400">
-  <img src="duration_distribution.png" alt="Credit Duration Distribution" width="400">
-  <img src="Age_distribution.png" alt="Age Distribution" width="400">
+  <img src="credit_amount_distribution.png" alt="Credit Amount Distribution" width="200">
+  <img src="duration_distribution.png" alt="Credit Duration Distribution" width="200">
+  <img src="Age_distribution.png" alt="Age Distribution" width="200">
 </p>
 <p align="center">
   <b>Figure 1:</b> Credit Amount Distribution &nbsp;&nbsp;&nbsp;&nbsp;
