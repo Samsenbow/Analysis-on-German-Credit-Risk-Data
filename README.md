@@ -98,6 +98,9 @@ Clients with longer employment histories show higher chances of good credit stat
 Telephone, job, and foreign worker status show similar trends — better socioeconomic conditions correlate with good credit.
 
 
+
+**plots and details to be added**
+
 ### Multicollinearity Analysis
 
 To identify potential multicollinearity among numerical variables, a correlation heatmap was generated. Most correlations were weak to moderate, indicating no severe multicollinearity in the dataset.
@@ -170,55 +173,6 @@ Performance Summary
 
 ### XGBoost
 
-
-
-## Key Results
-- **Best AUC:** Random Forest (76%)
-- **Fewest Errors:** XGBoost (48 total errors)
-- **Feature Selection:** Lasso identified 25 critical features
-
-
-
-
-
-
-### Key Predictive Features (XGBoost)
-
-The XGBoost model identified the following as most important for credit risk:
-
-These findings align with domain knowledge in credit risk assessment.
-
-| Rank | Feature              |    Gain   | Interpretation                                    |
-| :--: | :------------------- | :-------: | :------------------------------------------------ |
-|   1  | `checking_statusA14` | **0.235** | No checking account — *most important predictor!* |
-|   2  | `duration`           |   0.133   | Loan duration (in months)                         |
-|   3  | `credit_amount`      |   0.109   | Loan amount (in Deutsche Marks)                   |
-|   4  | `age`                |   0.082   | Customer’s age                                    |
-|   5  | `credit_historyA34`  |   0.053   | Credit history: “delay in paying off in the past” |
-|   6  | `savingsA65`         |   0.048   | Savings: “unknown/no savings account”             |
-|   7  | `purposeA41`         |   0.044   | Loan purpose: “used car”                          |
-|   8  | `checking_statusA11` |   0.036   | Checking account: “< 0 DM” (negative balance)     |
-|   9  | `installment_rate`   |   0.031   | Installment rate as % of disposable income        |
-|  10  | `jobA174`            |   0.022   | Job type: “skilled employee/official”             |
-
-
-
-
-
-
-## Interpretation: How Feature Importance Aligns with Credit Risk Logic
-
-The feature importance results align well with established principles of credit risk assessment. The **checking account status** (checking_statusA14, checking_statusA11) emerged as the most influential factor, which makes intuitive sense — customers without an active checking account or with a negative balance often exhibit higher default risk due to weaker financial discipline, limited financial integration, or possible credit invisibility.
-
-The **loan duration** and **credit amount** are also strong predictors: longer tenures and larger loans typically increase the probability of default because they extend exposure over time and place higher repayment burdens on borrowers (job loss, health issues, economic downturn, etc.). Similarly, **credit history** indicators such as past delays in payment (credit_historyA34) are classic measures of creditworthiness — borrowers with prior payment issues are statistically more likely to default. Further more, Delayed payments reveal:
-  - Cash flow management issues
-  - Prioritization of other obligations
-  - Possible over-leverage
-  - Financial stress signals
-
-The **savings** and **installment rate** features reflect a borrower’s financial buffer and repayment capacity. Limited savings or higher installment-to-income ratios suggest reduced financial resilience. Finally, demographic and occupational factors like age and job type (jobA174) add additional context — younger or less stable borrowers might show higher credit risk compared to older or permanently employed individuals.
-
-Overall, the model’s findings are consistent with financial domain expectations, enhancing its interpretability and practical relevance for credit scoring.
 
 
 
