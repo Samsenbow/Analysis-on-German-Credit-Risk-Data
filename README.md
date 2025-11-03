@@ -268,9 +268,9 @@ To illustrate the potential business impact of model predictions, we performed a
 
 **Interpretation:**
 
-- Random Forest approves slightly more customers, generating additional revenue from good approvals, but also incurs higher costs from bad approvals.
+- Random Forest approves same amount of customers, generating same revenue from good approvals, as XGBoost but also incurs higher costs from bad approvals.
 
-- XGBoost approves fewer customers but reduces losses from bad approvals.
+- XGBoost reduces losses from bad approvals.
 
 Depending on business priorities (maximizing revenue vs minimizing losses), either model could be preferred.
 
