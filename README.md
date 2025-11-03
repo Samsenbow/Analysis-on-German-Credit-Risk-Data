@@ -170,11 +170,39 @@ Performance Summary
 
 - The model also provides feature importance, helping to identify the most influential predictors in credit risk classification.
 
+<p align="center">
+  <img src="feature_importance_rf.png" alt="feature_importance_rf" width="400">
+  <br>
+  <b>Figure 6:</b> Heat map.
+</p>
 
 ### XGBoost
 
-**to be completed**
+To further enhance model performance and capture complex nonlinear relationships, an Extreme Gradient Boosting (XGBoost) classifier was implemented. The model was tuned using cross-validation to identify the optimal learning rate, maximum tree depth, and number of boosting rounds.
 
+Performance Summary:
 
+| Model   | Accuracy | AUC  | Sensitivity | Specificity | Balanced Accuracy |
+| :------ | :------- | :--- | :---------- | :---------- | :---------------- |
+| XGBoost | 0.76     | 0.76 | 0.91        | 0.42        | 0.66              |
+
+- The XGBoost model achieved an accuracy of 0.76 and an AUC of 0.756, representing a slight improvement over the Random Forest and logistic models.
+
+- Sensitivity (0.91) remained high, showing that the model correctly identified most of the good credit cases.
+
+- Specificity (0.42), though improved compared to other models, still indicates that distinguishing bad credit cases remains challenging — a common issue in imbalanced credit datasets.
+
+- The model’s balanced accuracy of 0.66 demonstrates improved overall performance, maintaining a good trade-off between true positive and true negative rates.
+
+- XGBoost’s gradient boosting approach efficiently captures feature interactions and nonlinearities, explaining its superior performance.
+
+<p align="center">
+  <img src="model_comparison_auc.png" alt="model_comparison_auc" width="400">
+  <img src="model_comparison_errors.png" alt="model_comparison_errors" width="400">  
+</p>
+<p align="center">
+  <b>Figure 7:</b> AUC comparison between models &nbsp;&nbsp;&nbsp;&nbsp;
+  <b>Figure 8:</b> Errors comparison between models &nbsp;&nbsp;&nbsp;&nbsp;  
+</p>
 
 
