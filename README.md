@@ -263,7 +263,7 @@ To illustrate the potential business impact of model predictions, we performed a
 
 | Model         | Good Approvals | Bad Approvals | Revenue (€) | Cost (€) | Net Expected Profit (€) |
 | ------------- | -------------- | ------------- | ----------- | -------- | ----------------------- |
-| Random Forest | 128            | 40            | 256,000     | 200,000  | 56,000                  |
+| Random Forest | 127            | 44            | 254,000     | 220,000  | 34,000                  |
 | XGBoost       | 127            | 35            | 254,000     | 175,000  | 79,000                  |
 
 **Interpretation:**
