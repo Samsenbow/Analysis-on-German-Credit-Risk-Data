@@ -63,7 +63,7 @@ Examining the distributions of numerical variables:
 
 **1. Checking Account Status (checking_status)**
 
-A total of 394 clients (39.4%) have no checking account (A14), and 348 of them (88%) are classified as good credit risks. Conversely, clients with negative or low balances (A11, A12) represent a substantial portion of the dataset (about 54%), indicating that many applicants hold limited liquidity. Interestingly, even among clients with no checking account, a majority still maintain good credit, suggesting that the absence of an account does not necessarily imply poor creditworthiness in this dataset. However, the relative proportion of bad credit cases is slightly higher among low or negative balance categories (A11, A12), indicating some association between checking status and credit class.
+A total of 394 clients (39.4%) have no checking account (A14), and 348 of them (88%) are classified as good credit. Conversely, clients with negative or low balances (A11, A12) represent a substantial portion of the dataset (about 54%), indicating that many applicants hold limited liquidity. Interestingly, even among clients with no checking account, a majority still maintain good credit, suggesting that the absence of an account does not necessarily imply poor creditworthiness in this dataset. However, the relative proportion of bad credit cases is slightly higher among low or negative balance categories (A11, A12), indicating some association between checking status and credit class.
 
 **2. Credit History (credit_history)**
 
@@ -192,42 +192,88 @@ Performance Summary:
 
 - XGBoost’s gradient boosting approach efficiently captures feature interactions and nonlinearities, explaining its superior performance.
 
+<p align="center">
+  <img src="model_comparison_auc.png" alt="model_comparison_auc" width="400">
+  <img src="model_comparison_errors.png" alt="model_comparison_errors" width="400">  
+</p>
+<p align="center">
+  <b>Figure 6:</b> AUC comparison between models &nbsp;&nbsp;&nbsp;&nbsp;
+  <b>Figure 7:</b> Errors comparison between models &nbsp;&nbsp;&nbsp;&nbsp;  
+</p>
 
+## Interpretation: How Feature Importance Aligns with Credit Risk Logic
 
+The models reveal several features as highly predictive of credit risk, and their importance aligns well with financial domain expectations:
 
-### Feature Importance Comparison
+**Checking Account Status:**
 
-Although both Random Forest and XGBoost are tree-based ensemble methods, they differ in how they construct and interpret decision trees, which affects how feature importance is reported.
+- Random Forest identifies checking account status as one of the most influential predictors, considering the variable as a whole.
 
-- Random Forest builds many independent trees using a bagging approach and aggregates impurity reductions at the variable level. As a result, categorical variables that were one-hot encoded (e.g., checking account status) tend to appear as a single feature in the importance ranking.
-
-- XGBoost, on the other hand, uses a boosting approach, where trees are built sequentially to correct previous errors. It evaluates and records importance for each individual dummy variable (e.g., checking_statusA14, credit_historyA34).
-
-This means XGBoost provides category-specific insights, showing which particular levels within a categorical variable contribute most strongly to credit risk prediction. Random Forest offers a more aggregated view, highlighting which overall variables are influential. Both perspectives are complementary — Random Forest helps identify broad predictors, while XGBoost reveals finer distinctions within them.
-
-
-
-
+- XGBoost highlights the specific category A14 (no checking account) as the top feature. According to the cross-tab, 88% of clients with no checking account were classified as good credit. While this appears counterintuitive, it reflects a dataset-specific association rather than causal logic. XGBoost captures category-level patterns that help distinguish between good and bad credit, complementing the broader variable-level view from Random Forest.
 
 <p align="center">
   <img src="feature_importance_rf.png" alt="model_comparison_auc" width="400">
   <img src="feature_importance_xg.png" alt="model_comparison_errors" width="400">  
 </p>
 <p align="center">
-  <b>Figure 6:</b> Features seelcted by Random Forest. &nbsp;&nbsp;&nbsp;&nbsp;
-  <b>Figure 7:</b> Features seelcted by XGBoost. &nbsp;&nbsp;&nbsp;&nbsp;  
+  <b>Figure 8:</b> Features seelcted by Random Forest. &nbsp;&nbsp;&nbsp;&nbsp;
+  <b>Figure 9:</b> Features seelcted by XGBoost. &nbsp;&nbsp;&nbsp;&nbsp;  
 </p>
 
 
+**Loan Duration and Credit Amount:**
 
+Longer tenures and larger loans generally increase default probability, as they extend exposure over time and place higher repayment burdens on borrowers (e.g., job loss, health issues, or economic downturns).
 
-<p align="center">
-  <img src="model_comparison_auc.png" alt="model_comparison_auc" width="400">
-  <img src="model_comparison_errors.png" alt="model_comparison_errors" width="400">  
-</p>
-<p align="center">
-  <b>Figure 8:</b> AUC comparison between models &nbsp;&nbsp;&nbsp;&nbsp;
-  <b>Figure 9:</b> Errors comparison between models &nbsp;&nbsp;&nbsp;&nbsp;  
-</p>
+**Credit History:**
 
+Indicators such as past delays in payment (credit_historyA34) are classic measures of creditworthiness. Delayed payments may reveal:
 
+- Cash flow management issues
+
+- Prioritization of other obligations
+
+- Possible over-leverage
+
+- Signs of financial stress
+
+**Savings and Installment Rate:**
+
+Savings balance and installment-to-income ratio reflect financial buffer and repayment capacity. Limited savings or high installment rates suggest reduced resilience to shocks.
+
+**Demographic and Occupational Factors:**
+
+Age and job type (jobA174) provide additional context — younger or less stably employed borrowers may show higher credit risk compared to older or permanently employed individuals.
+
+**Summary:**
+
+- The models consistently identify checking account status, credit amount, loan duration, credit history, savings, and installment rate as key predictors.
+
+- Feature importance captures predictive patterns in the dataset, which may sometimes differ from general expectations (e.g., no checking account correlating with good credit).
+
+- Overall, the findings are interpretable and align with financial reasoning, enhancing the practical relevance of the models for credit scoring.
+
+### Hypothetical Financial Comparison: Random Forest vs XGBoost
+
+To illustrate the potential business impact of model predictions, we performed a hypothetical comparison using the following assumptions:
+
+- Profit per approved good customer: €2,000
+
+- Loss per approved bad customer: €5,000
+
+| Model         | Good Approvals | Bad Approvals | Revenue (€) | Cost (€) | Net Expected Profit (€) |
+| ------------- | -------------- | ------------- | ----------- | -------- | ----------------------- |
+| Random Forest | 128            | 40            | 256,000     | 200,000  | 56,000                  |
+| XGBoost       | 127            | 35            | 254,000     | 175,000  | 79,000                  |
+
+**Interpretation:**
+
+- Random Forest approves slightly more customers, generating additional revenue from good approvals, but also incurs higher costs from bad approvals.
+
+- XGBoost approves fewer customers but reduces losses from bad approvals.
+
+Depending on business priorities (maximizing revenue vs minimizing losses), either model could be preferred.
+
+This demonstrates how feature selection and prediction performance translate into practical financial considerations.
+
+⚠️ Note: This is a hypothetical scenario for illustrative purposes. Real-world deployment would require more detailed financial modeling and risk assessment.
