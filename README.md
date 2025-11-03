@@ -170,11 +170,7 @@ Performance Summary
 
 - The model also provides feature importance, helping to identify the most influential predictors in credit risk classification.
 
-<p align="center">
-  <img src="feature_importance_rf.png" alt="feature_importance_rf" width="400">
-  <br>
-  <b>Figure 6:</b> Heat map.
-</p>
+
 
 ### XGBoost
 
@@ -196,13 +192,42 @@ Performance Summary:
 
 - XGBoost’s gradient boosting approach efficiently captures feature interactions and nonlinearities, explaining its superior performance.
 
+
+
+
+### Feature Importance Comparison
+
+Although both Random Forest and XGBoost are tree-based ensemble methods, they differ in how they construct and interpret decision trees, which affects how feature importance is reported.
+
+- Random Forest builds many independent trees using a bagging approach and aggregates impurity reductions at the variable level. As a result, categorical variables that were one-hot encoded (e.g., checking account status) tend to appear as a single feature in the importance ranking.
+
+- XGBoost, on the other hand, uses a boosting approach, where trees are built sequentially to correct previous errors. It evaluates and records importance for each individual dummy variable (e.g., checking_statusA14, credit_historyA34).
+
+This means XGBoost provides category-specific insights, showing which particular levels within a categorical variable contribute most strongly to credit risk prediction. Random Forest offers a more aggregated view, highlighting which overall variables are influential. Both perspectives are complementary — Random Forest helps identify broad predictors, while XGBoost reveals finer distinctions within them.
+
+
+
+
+
+<p align="center">
+  <img src="feature_importance_rf.png" alt="model_comparison_auc" width="400">
+  <img src="feature_importance_xg.png" alt="model_comparison_errors" width="400">  
+</p>
+<p align="center">
+  <b>Figure 6:</b> Features seelcted by Random Forest. &nbsp;&nbsp;&nbsp;&nbsp;
+  <b>Figure 7:</b> Features seelcted by XGBoost. &nbsp;&nbsp;&nbsp;&nbsp;  
+</p>
+
+
+
+
 <p align="center">
   <img src="model_comparison_auc.png" alt="model_comparison_auc" width="400">
   <img src="model_comparison_errors.png" alt="model_comparison_errors" width="400">  
 </p>
 <p align="center">
-  <b>Figure 7:</b> AUC comparison between models &nbsp;&nbsp;&nbsp;&nbsp;
-  <b>Figure 8:</b> Errors comparison between models &nbsp;&nbsp;&nbsp;&nbsp;  
+  <b>Figure 8:</b> AUC comparison between models &nbsp;&nbsp;&nbsp;&nbsp;
+  <b>Figure 9:</b> Errors comparison between models &nbsp;&nbsp;&nbsp;&nbsp;  
 </p>
 
 
